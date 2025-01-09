@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const Nav());
-}
-
 class Nav extends StatefulWidget {
   const Nav({super.key});
 

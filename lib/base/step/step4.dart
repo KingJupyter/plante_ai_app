@@ -51,7 +51,7 @@ class Step4 extends StatelessWidget {
             children: [
               Center(
                   child: Card(
-                      margin: const EdgeInsets.all(16),
+                      // margin: const EdgeInsets.all(16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -140,7 +140,7 @@ class Step4 extends StatelessWidget {
               SizedBox(height: 20),
               Center(
                   child: Card(
-                      margin: const EdgeInsets.all(16),
+                      // margin: const EdgeInsets.all(16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),

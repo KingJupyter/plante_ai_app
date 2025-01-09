@@ -9,35 +9,39 @@ class Result extends StatefulWidget {
 }
 
 class _ResultState extends State<Result> {
-  Map<String, dynamic> nutrition = {
+  final Map<String, dynamic> nutrition = {
     "name": "Apple",
     "calories": 367,
     "nutrition": {"fat": 49, "carbs": 80, "protein": 80, "fiber": 80}
   };
+
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Apple Nutrition'),
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left, color: Colors.black),
+          iconSize: 30,
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          "Nutrition",
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: Center(
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const SizedBox(height: 100),
-
-            // Title
-            const Text(
-              "Analyze Your Food",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            // Image Container
+            const Spacer(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Container(
@@ -49,22 +53,16 @@ class _ResultState extends State<Result> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Main Image
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: Image.asset(
                         'assets/food_images/apple_pie.jpeg',
-                        // height: 240,
-                        // width: 240,
+                        height: screenSize.height * 0.3,
+                        width: screenSize.width * 0.9,
                         fit: BoxFit.cover,
                       ),
                     ),
-                    // Green Border
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
+                    Positioned.fill(
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.green, width: 4),
@@ -76,11 +74,9 @@ class _ResultState extends State<Result> {
                 ),
               ),
             ),
-
             const Spacer(),
-
-            // Full-width Bar Chart
             nutritionAnalysis(nutrition: nutrition),
+            const SizedBox(height: 20),
           ],
         ),
       ),

@@ -44,6 +44,10 @@ dependencies:
   path: ^1.9.0
   toggle_switch: ^2.3.0
   pie_chart: ^5.4.0
+  syncfusion_flutter_gauges: ^28.1.38
+  provider: ^6.1.2
+  share_plus: ^7.0.0
+  url_launcher: ^6.1.11
 
 dev_dependencies:
   flutter_test:
@@ -74,10 +78,11 @@ flutter:
     - assets/icons/BMI_result.svg
     - assets/icons/Daily_Calorie_Goal.svg
     - assets/icons/Success_check.png
-    - assets/images/food.png
-    - assets/images/scale.png
+    - assets/images/age.png
+    - assets/images/weight.png
     - assets/images/activity.png
     - assets/images/diet.png
+    - assets/images/goal.png
     # - flags/
 
   # An image asset can refer to one or more resolution-specific "variants", see

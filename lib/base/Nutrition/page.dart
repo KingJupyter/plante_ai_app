@@ -85,35 +85,25 @@ class _NutritionState extends State<Nutrition> {
     ];
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left, color: Colors.black),
+          iconSize: 30,
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          "Nutrition",
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: Column(
         children: [
-          SizedBox(height: 50),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.chevron_left),
-                    iconSize: 50.0,
-                    onPressed: () {},
-                  ),
-                  Expanded(
-                    child: Text(
-                      "Nutrition",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
           const SizedBox(height: 50),
           Padding(
             padding: const EdgeInsets.only(left: 40, right: 40),
