@@ -23,7 +23,7 @@ class _ProfileState extends State<Profile> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.chevron_left),
-          iconSize: 50.0,
+          iconSize: 30.0,
           onPressed: () => Navigator.pop(context), // Added navigation
         ),
         title: const Text(
@@ -100,7 +100,7 @@ class _ProfileState extends State<Profile> {
               icon:
                   const Icon(Icons.edit_square, color: Colors.green, size: 30),
               onPressed: () {
-                // Add edit functionality
+                Navigator.pushNamed(context, '/EditProfile');
               },
             ),
             const SizedBox(width: 20),

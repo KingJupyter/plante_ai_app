@@ -31,8 +31,8 @@ class _LogInState extends State<LogIn> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Center(
-              child: SvgPicture.asset(
-                'assets/logo.svg',
+              child: Image.asset(
+                'assets/icons/icon.png',
                 height: 24,
                 width: 24,
               ),
@@ -127,8 +127,8 @@ class _LogInState extends State<LogIn> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: SvgPicture.asset(
-                            'assets/google_logo.svg',
+                          child: Image.asset(
+                            'assets/icons/google_logo.png',
                             height: 24,
                             width: 24,
                           ),
@@ -154,7 +154,9 @@ class _LogInState extends State<LogIn> {
           children: [
             const Text("Don't have an account?"),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/SignUp');
+              },
               child: const Text(
                 'Sign Up',
                 style: TextStyle(color: Color(0xFF347928)),

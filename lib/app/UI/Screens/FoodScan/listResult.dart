@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-import 'package:flutter_application_1/Component/nav.dart';
-
 class FoodNutrients {
   final double protein;
   final double fat;
@@ -115,13 +113,6 @@ class _ListResultState extends State<ListResult> {
       ),
     ),
   ];
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   void updateFoodList(List<Food> newList) {
     setState(() {
@@ -133,6 +124,7 @@ class _ListResultState extends State<ListResult> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         centerTitle: true,
         title: const Text(
           "Scanner Result",
@@ -159,18 +151,22 @@ class _ListResultState extends State<ListResult> {
           children: <Widget>[
             IconButton(
               icon: Icon(
-                Icons.grid_view,
-                color: _selectedIndex == 0 ? Colors.green : Colors.black,
+                Icons.home,
+                color: Colors.black,
               ),
-              onPressed: () => _onItemTapped(0),
+              onPressed: () {
+                Navigator.pushNamed(context, '/Dashboard');
+              },
             ),
             const SizedBox(width: 60), // Space for the FAB
             IconButton(
               icon: Icon(
-                Icons.checklist,
-                color: _selectedIndex == 1 ? Colors.green : Colors.black,
+                Icons.format_list_bulleted,
+                color: Colors.green,
               ),
-              onPressed: () => _onItemTapped(1),
+              onPressed: () {
+                Navigator.pushNamed(context, '/ScanFoodListResult');
+              },
             ),
           ],
         ),
@@ -184,8 +180,10 @@ class _ListResultState extends State<ListResult> {
           },
           shape: const CircleBorder(),
           backgroundColor: Colors.green,
-          child:
-              const Icon(Icons.qr_code_scanner_outlined, color: Colors.white),
+          child: const Icon(
+            Icons.camera_alt,
+            color: Colors.white,
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -193,12 +191,17 @@ class _ListResultState extends State<ListResult> {
   }
 
   Widget _buildResultCard(Food food) {
-    return Stack(
-      alignment: Alignment.centerLeft,
-      children: [
-        _buildBackgroundLayers(),
-        _buildContentRow(food),
-      ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, '/ScanFoodResult', arguments: food);
+      },
+      child: Stack(
+        alignment: Alignment.centerLeft,
+        children: [
+          _buildBackgroundLayers(),
+          _buildContentRow(food),
+        ],
+      ),
     );
   }
 

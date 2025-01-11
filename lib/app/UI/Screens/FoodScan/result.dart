@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Component/nutritionAnalysis.dart';
+import '../../Components/nutritionAnalysis.dart';
 
 class Result extends StatefulWidget {
-  const Result({super.key});
+  const Result({
+    super.key,
+  });
 
   @override
   State<Result> createState() => _ResultState();

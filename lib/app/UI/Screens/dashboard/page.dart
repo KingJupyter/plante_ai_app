@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Component/nav.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
-import '../../Component/dailyMacros.dart';
+import '../../Components/dailyMacros.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -11,19 +10,13 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  static const name = "John Doe";
   static const defaultNutrition = {
     "nutrition": {"fat": 49, "carbs": 80, "protein": 80, "fiber": 80},
     "goal": {"fat": 49, "carbs": 80, "protein": 80, "fiber": 80},
   };
 
   final Map<String, dynamic> nutrition = defaultNutrition;
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   static const double TARGET_WEIGHT = 50.0;
   static const double STARTING_WEIGHT = 105.0;
@@ -69,7 +62,41 @@ class _DashboardState extends State<Dashboard> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Dashboard")),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.green,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: const Icon(
+                Icons.person,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.pushNamed(context, '/Profile');
+              },
+            ),
+            Expanded(
+              child: Center(
+                child: Text(
+                  "${name}'s App",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.settings,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.pushNamed(context, '/Setting');
+              },
+            ),
+          ],
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(screenWidth > 600 ? 32.0 : 16.0),
@@ -343,18 +370,22 @@ class _DashboardState extends State<Dashboard> {
           children: <Widget>[
             IconButton(
               icon: Icon(
-                Icons.grid_view,
-                color: _selectedIndex == 0 ? Colors.green : Colors.black,
+                Icons.home,
+                color: Colors.green,
               ),
-              onPressed: () => _onItemTapped(0),
+              onPressed: () {
+                Navigator.pushNamed(context, '/Dashboard');
+              },
             ),
             const SizedBox(width: 60), // Space for the FAB
             IconButton(
               icon: Icon(
-                Icons.checklist,
-                color: _selectedIndex == 1 ? Colors.green : Colors.black,
+                Icons.format_list_bulleted,
+                color: Colors.black,
               ),
-              onPressed: () => _onItemTapped(1),
+              onPressed: () {
+                Navigator.pushNamed(context, '/ScanFoodListResult');
+              },
             ),
           ],
         ),
@@ -368,8 +399,10 @@ class _DashboardState extends State<Dashboard> {
           },
           shape: const CircleBorder(),
           backgroundColor: Colors.green,
-          child:
-              const Icon(Icons.qr_code_scanner_outlined, color: Colors.white),
+          child: const Icon(
+            Icons.camera_alt,
+            color: Colors.white,
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

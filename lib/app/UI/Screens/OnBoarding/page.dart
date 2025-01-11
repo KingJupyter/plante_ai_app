@@ -14,7 +14,7 @@ class OnBoarding extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 20.0),
             child: Image.asset(
-              'assets/logo.svg',
+              'assets/icons/icon.png',
               height: 100,
             ),
           ),
@@ -22,7 +22,7 @@ class OnBoarding extends StatelessWidget {
           // "Get Start" Button
           ElevatedButton(
             onPressed: () {
-              // Handle "Get Start" button press
+              Navigator.pushNamed(context, '/Dashboard');
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF347928),
@@ -38,7 +38,7 @@ class OnBoarding extends StatelessWidget {
           // "Log In" Button
           ElevatedButton(
             onPressed: () {
-              // Handle "Log In" button press
+              Navigator.pushNamed(context, '/LogIn');
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,

@@ -27,10 +27,6 @@ class Setting extends StatelessWidget {
     }
   }
 
-  Future<void> _handleLogout(BuildContext context) async {
-    Navigator.pushReplacementNamed(context, '/login');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +81,7 @@ class Setting extends StatelessWidget {
                       const SizedBox(height: 10),
                       _buildSettingButton(
                         "Logout",
-                        onPressed: () => _handleLogout(context),
+                        onPressed: () => _showLogoutDialog(context),
                       ),
                     ],
                   ),
@@ -182,6 +178,80 @@ class Setting extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.logout, color: Colors.green, size: 40),
+              const SizedBox(height: 16),
+              const Text(
+                "Logout",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                "Are you sure you want to logout?",
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildDialogButton(
+                    context,
+                    "CANCEL",
+                    Colors.white,
+                    Colors.green,
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  _buildDialogButton(
+                    context,
+                    "CONFIRM",
+                    Colors.green,
+                    Colors.white,
+                    onPressed: () {
+                      // Add your logout logic here
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDialogButton(
+      BuildContext context, String text, Color bgColor, Color textColor,
+      {required VoidCallback onPressed}) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: bgColor,
+        foregroundColor: textColor,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      child: Text(text),
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class SignUp extends StatefulWidget {
@@ -14,14 +13,18 @@ class _SignUpState extends State<SignUp> {
   bool _isObscured = true;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  final TextEditingController controller = TextEditingController();
-  String initialCountry = 'NG';
-  PhoneNumber number = PhoneNumber(isoCode: 'NG');
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+
+  String initialCountry = 'US'; // Set initial country to US
+  PhoneNumber number = PhoneNumber(isoCode: 'US'); // Initialize with 'US'
 
   void getPhoneNumber(String phoneNumber) async {
     PhoneNumber number =
         await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber, 'US');
-
     setState(() {
       this.number = number;
     });
@@ -29,7 +32,11 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void dispose() {
-    controller.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    phoneController.dispose();
     super.dispose();
   }
 
@@ -37,22 +44,22 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: SvgPicture.asset(
-                'assets/logo.svg',
-                height: 24,
-                width: 24,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Form(
+              key: formKey,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextField(
+                  Image.asset(
+                    'assets/icons/icon.png',
+                    height: 24,
+                    width: 24,
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: firstNameController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -60,12 +67,13 @@ class _SignUpState extends State<SignUp> {
                       labelText: 'First Name',
                     ),
                     keyboardType: TextInputType.name,
-                    onChanged: (text) {
-                      print('Text entered: $text');
-                    },
+                    validator: (value) => value != null && value.isEmpty
+                        ? 'Enter first name'
+                        : null,
                   ),
                   const SizedBox(height: 20),
-                  TextField(
+                  TextFormField(
+                    controller: lastNameController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -73,12 +81,13 @@ class _SignUpState extends State<SignUp> {
                       labelText: 'Last Name',
                     ),
                     keyboardType: TextInputType.name,
-                    onChanged: (text) {
-                      print('Text entered: $text');
-                    },
+                    validator: (value) => value != null && value.isEmpty
+                        ? 'Enter last name'
+                        : null,
                   ),
                   const SizedBox(height: 20),
-                  TextField(
+                  TextFormField(
+                    controller: emailController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -86,17 +95,16 @@ class _SignUpState extends State<SignUp> {
                       labelText: 'Email',
                     ),
                     keyboardType: TextInputType.emailAddress,
-                    onChanged: (text) {
-                      print('Text entered: $text');
-                    },
+                    validator: (value) =>
+                        value != null && value.isEmpty ? 'Enter email' : null,
                   ),
                   const SizedBox(height: 20),
                   InternationalPhoneNumberInput(
                     onInputChanged: (PhoneNumber number) {
-                      print(number.phoneNumber);
+                      // Handle change
                     },
                     onInputValidated: (bool value) {
-                      print(value);
+                      // Handle validation
                     },
                     selectorConfig: SelectorConfig(
                       selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
@@ -107,17 +115,18 @@ class _SignUpState extends State<SignUp> {
                     autoValidateMode: AutovalidateMode.disabled,
                     selectorTextStyle: TextStyle(color: Colors.black),
                     initialValue: number,
-                    textFieldController: controller,
+                    textFieldController: phoneController,
                     formatInput: true,
                     keyboardType: TextInputType.numberWithOptions(
                         signed: true, decimal: true),
                     inputBorder: OutlineInputBorder(),
                     onSaved: (PhoneNumber number) {
-                      print('On Saved: $number');
+                      // Handle save
                     },
                   ),
                   const SizedBox(height: 20),
-                  TextField(
+                  TextFormField(
+                    controller: passwordController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -136,7 +145,9 @@ class _SignUpState extends State<SignUp> {
                     ),
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: _isObscured,
-                    onChanged: (text) {},
+                    validator: (value) => value != null && value.isEmpty
+                        ? 'Enter password'
+                        : null,
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -149,26 +160,40 @@ class _SignUpState extends State<SignUp> {
                           });
                         },
                       ),
-                      RichText(
-                          text: TextSpan(children: <TextSpan>[
-                        TextSpan(
-                            text: 'I agree to ',
-                            style: TextStyle(color: Colors.black)),
-                        TextSpan(
-                            text: 'Platform Terms ',
-                            style: TextStyle(color: Color(0xFF347928))),
-                        TextSpan(
-                            text: '& Condition and ',
-                            style: TextStyle(color: Colors.black)),
-                        TextSpan(
-                            text: 'Privacy Policy',
-                            style: TextStyle(color: Color(0xFF347928))),
-                      ])),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(color: Colors.black),
+                            children: <TextSpan>[
+                              TextSpan(text: 'I agree to '),
+                              TextSpan(
+                                text: 'Platform Terms ',
+                                style: TextStyle(color: Color(0xFF347928)),
+                              ),
+                              TextSpan(text: '& Condition and '),
+                              TextSpan(
+                                text: 'Privacy Policy',
+                                style: TextStyle(color: Color(0xFF347928)),
+                              ),
+                            ],
+                          ),
+                          overflow: TextOverflow.clip,
+                          softWrap: true,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (formKey.currentState!.validate() && _isChecked) {
+                        Navigator.pushNamed(context, '/Step1');
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Please complete all fields')),
+                        );
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF347928),
                       foregroundColor: Colors.white,
@@ -178,12 +203,12 @@ class _SignUpState extends State<SignUp> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text("SignUp"),
+                    child: Text("Sign Up"),
                   ),
                 ],
               ),
             ),
-          ],
+          ),
         ),
       ),
       bottomSheet: Container(
@@ -193,7 +218,9 @@ class _SignUpState extends State<SignUp> {
           children: [
             const Text("Don't have an account?"),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/LogIn');
+              },
               child: const Text(
                 'Sign In',
                 style: TextStyle(color: Color(0xFF347928)),

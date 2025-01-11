@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import '../../Component/bmi_parameters.dart';
+import '../../Components/bmi_parameters.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -162,6 +162,10 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  final ValueNotifier<int> _selectedGoalNotifier = ValueNotifier<int>(1);
+  final ValueNotifier<int> _selectedActivityLevelNotifier =
+      ValueNotifier<int>(1);
+
   Widget _buildGoalSection() {
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -173,33 +177,41 @@ class _EditProfileState extends State<EditProfile> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: [
-                _buildRadioTile(
-                  'Weight Loss',
-                  1,
-                  groupValue: _selectedGoal,
-                  onChanged: (value) => setState(() => _selectedGoal = value!),
+          ValueListenableBuilder<int>(
+            valueListenable: _selectedGoalNotifier,
+            builder: (context, selectedGoal, _) {
+              return Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                _buildRadioTile(
-                  'Muscle Gain',
-                  2,
-                  groupValue: _selectedGoal,
-                  onChanged: (value) => setState(() => _selectedGoal = value!),
+                child: Column(
+                  children: [
+                    _buildRadioTile(
+                      'Weight Loss',
+                      1,
+                      groupValue: selectedGoal,
+                      onChanged: (value) =>
+                          _selectedGoalNotifier.value = value!,
+                    ),
+                    _buildRadioTile(
+                      'Muscle Gain',
+                      2,
+                      groupValue: selectedGoal,
+                      onChanged: (value) =>
+                          _selectedGoalNotifier.value = value!,
+                    ),
+                    _buildRadioTile(
+                      'Maintain Weight',
+                      3,
+                      groupValue: selectedGoal,
+                      onChanged: (value) =>
+                          _selectedGoalNotifier.value = value!,
+                    ),
+                  ],
                 ),
-                _buildRadioTile(
-                  'Maintain Weight',
-                  3,
-                  groupValue: _selectedGoal,
-                  onChanged: (value) => setState(() => _selectedGoal = value!),
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ],
       ),
@@ -217,50 +229,55 @@ class _EditProfileState extends State<EditProfile> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: [
-                _buildRadioTile(
-                  'Sedentary',
-                  1,
-                  groupValue: _selectedActivityLevel,
-                  onChanged: (value) =>
-                      setState(() => _selectedActivityLevel = value!),
+          ValueListenableBuilder<int>(
+            valueListenable: _selectedActivityLevelNotifier,
+            builder: (context, selectedActivityLevel, _) {
+              return Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                _buildRadioTile(
-                  'Lightly Active',
-                  2,
-                  groupValue: _selectedActivityLevel,
-                  onChanged: (value) =>
-                      setState(() => _selectedActivityLevel = value!),
+                child: Column(
+                  children: [
+                    _buildRadioTile(
+                      'Sedentary',
+                      1,
+                      groupValue: selectedActivityLevel,
+                      onChanged: (value) =>
+                          _selectedActivityLevelNotifier.value = value!,
+                    ),
+                    _buildRadioTile(
+                      'Lightly Active',
+                      2,
+                      groupValue: selectedActivityLevel,
+                      onChanged: (value) =>
+                          _selectedActivityLevelNotifier.value = value!,
+                    ),
+                    _buildRadioTile(
+                      'Moderately Active',
+                      3,
+                      groupValue: selectedActivityLevel,
+                      onChanged: (value) =>
+                          _selectedActivityLevelNotifier.value = value!,
+                    ),
+                    _buildRadioTile(
+                      'Very Active',
+                      4,
+                      groupValue: selectedActivityLevel,
+                      onChanged: (value) =>
+                          _selectedActivityLevelNotifier.value = value!,
+                    ),
+                    _buildRadioTile(
+                      'Extra Active',
+                      5,
+                      groupValue: selectedActivityLevel,
+                      onChanged: (value) =>
+                          _selectedActivityLevelNotifier.value = value!,
+                    ),
+                  ],
                 ),
-                _buildRadioTile(
-                  'Moderately Active',
-                  3,
-                  groupValue: _selectedActivityLevel,
-                  onChanged: (value) =>
-                      setState(() => _selectedActivityLevel = value!),
-                ),
-                _buildRadioTile(
-                  'Very Active',
-                  4,
-                  groupValue: _selectedActivityLevel,
-                  onChanged: (value) =>
-                      setState(() => _selectedActivityLevel = value!),
-                ),
-                _buildRadioTile(
-                  'Extra Active',
-                  5,
-                  groupValue: _selectedActivityLevel,
-                  onChanged: (value) =>
-                      setState(() => _selectedActivityLevel = value!),
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ],
       ),
@@ -331,6 +348,8 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   void dispose() {
+    _selectedGoalNotifier.dispose();
+    _selectedActivityLevelNotifier.dispose();
     phoneController.dispose();
     firstNameController.dispose();
     lastNameController.dispose();
