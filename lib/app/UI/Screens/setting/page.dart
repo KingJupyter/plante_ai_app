@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -224,8 +225,9 @@ class Setting extends StatelessWidget {
                     "CONFIRM",
                     Colors.green,
                     Colors.white,
-                    onPressed: () {
-                      // Add your logout logic here
+                    onPressed: () async {
+                      // Ensure the method is async when calling asynchronous code
+                      await FirebaseAuth.instance.signOut();
                       Navigator.of(context).pop();
                     },
                   ),

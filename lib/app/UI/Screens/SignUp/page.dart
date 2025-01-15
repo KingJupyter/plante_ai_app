@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -13,6 +15,26 @@ class _SignUpState extends State<SignUp> {
   bool _isObscured = true;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> registerUser() async {
+    try {
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration successful')),
+      );
+      Navigator.pushNamed(context, '/Step1');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to register: $e')),
+      );
+    }
+  }
+
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -22,12 +44,34 @@ class _SignUpState extends State<SignUp> {
   String initialCountry = 'US'; // Set initial country to US
   PhoneNumber number = PhoneNumber(isoCode: 'US'); // Initialize with 'US'
 
-  void getPhoneNumber(String phoneNumber) async {
-    PhoneNumber number =
-        await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber, 'US');
-    setState(() {
-      this.number = number;
-    });
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Enter email';
+    }
+    String pattern = r'^[^@]+@[^@]+\.[^@]+';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value)) {
+      return 'Enter a valid email';
+    }
+    return null;
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Enter password';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters long';
+    }
+    return null;
+  }
+
+  String? validatePhoneNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Enter phone number';
+    }
+    // Additional phone number format checks can be added here
+    return null;
   }
 
   @override
@@ -95,16 +139,22 @@ class _SignUpState extends State<SignUp> {
                       labelText: 'Email',
                     ),
                     keyboardType: TextInputType.emailAddress,
-                    validator: (value) =>
-                        value != null && value.isEmpty ? 'Enter email' : null,
+                    validator: validateEmail,
                   ),
                   const SizedBox(height: 20),
                   InternationalPhoneNumberInput(
                     onInputChanged: (PhoneNumber number) {
-                      // Handle change
+                      print('Phone Number Changed: ${number.phoneNumber}');
+                      setState(() {
+                        this.number = number;
+                      });
                     },
                     onInputValidated: (bool value) {
-                      // Handle validation
+                      if (!value) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Invalid phone number')),
+                        );
+                      }
                     },
                     selectorConfig: SelectorConfig(
                       selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
@@ -120,8 +170,9 @@ class _SignUpState extends State<SignUp> {
                     keyboardType: TextInputType.numberWithOptions(
                         signed: true, decimal: true),
                     inputBorder: OutlineInputBorder(),
+                    validator: validatePhoneNumber,
                     onSaved: (PhoneNumber number) {
-                      // Handle save
+                      print('Saved: $number');
                     },
                   ),
                   const SizedBox(height: 20),
@@ -145,9 +196,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: _isObscured,
-                    validator: (value) => value != null && value.isEmpty
-                        ? 'Enter password'
-                        : null,
+                    validator: validatePassword,
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -169,11 +218,19 @@ class _SignUpState extends State<SignUp> {
                               TextSpan(
                                 text: 'Platform Terms ',
                                 style: TextStyle(color: Color(0xFF347928)),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    // Navigate to platform terms
+                                  },
                               ),
                               TextSpan(text: '& Condition and '),
                               TextSpan(
                                 text: 'Privacy Policy',
                                 style: TextStyle(color: Color(0xFF347928)),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    // Navigate to privacy policy
+                                  },
                               ),
                             ],
                           ),
@@ -187,7 +244,8 @@ class _SignUpState extends State<SignUp> {
                   ElevatedButton(
                     onPressed: () {
                       if (formKey.currentState!.validate() && _isChecked) {
-                        Navigator.pushNamed(context, '/Step1');
+                        formKey.currentState!.save();
+                        registerUser();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Please complete all fields')),

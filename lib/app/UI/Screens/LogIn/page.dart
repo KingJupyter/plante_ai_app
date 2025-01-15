@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 
 class LogIn extends StatefulWidget {
   const LogIn({super.key});
@@ -13,13 +13,52 @@ class _LogInState extends State<LogIn> {
   bool _isChecked = false;
   bool _isObscured = true;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  String email = "";
+  String password = "";
 
-  Future<void> _handleSignIn() async {
+  Future<void> _handleGoogleSignIn() async {
     try {
-      final GoogleSignInAccount? user = await _googleSignIn.signIn();
-      print('User signed in: ${user?.displayName}');
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        // The sign in request was canceled by the user before completion.
+        return;
+      }
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      print('User signed in with Google: ${userCredential.user?.displayName}');
     } catch (error) {
-      print('Sign-in failed: $error');
+      print('Google sign-in failed: $error');
+    }
+  }
+
+  Future<void> _signInWithEmailAndPassword(
+      String email, String password) async {
+    print('Email: $email, Password: $password');
+    if (email.isEmpty || password.isEmpty) {
+      print('Email and password cannot be empty.');
+      return;
+    }
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      print('User signed in: ${userCredential.user?.email}');
+      Navigator.pushNamed(context, '/Dashboard');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
     }
   }
 
@@ -51,6 +90,7 @@ class _LogInState extends State<LogIn> {
                     ),
                     keyboardType: TextInputType.emailAddress,
                     onChanged: (text) {
+                      email = text;
                       print('Text entered: $text');
                     },
                   ),
@@ -74,7 +114,10 @@ class _LogInState extends State<LogIn> {
                     ),
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: _isObscured,
-                    onChanged: (text) {},
+                    onChanged: (text) {
+                      password = text;
+                      print('Text entered: $password');
+                    },
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -92,7 +135,11 @@ class _LogInState extends State<LogIn> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Provide appropriate email and password values
+
+                      _signInWithEmailAndPassword(email, password);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF347928),
                       foregroundColor: Colors.white,
@@ -102,7 +149,7 @@ class _LogInState extends State<LogIn> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text("LogIn"),
+                    child: Text("Log In"),
                   ),
                   TextButton(
                     onPressed: () {},
@@ -113,6 +160,7 @@ class _LogInState extends State<LogIn> {
                   ),
                   Center(child: Text("or")),
                   ElevatedButton(
+                    onPressed: _handleGoogleSignIn,
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
@@ -121,7 +169,6 @@ class _LogInState extends State<LogIn> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         )),
-                    onPressed: _handleSignIn,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

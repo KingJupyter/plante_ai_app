@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Step1 extends StatefulWidget {
   const Step1({super.key});
@@ -9,10 +10,40 @@ class Step1 extends StatefulWidget {
 
 class _Step1State extends State<Step1> {
   int _selectedButtonIndex = -1;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   void _onButtonPressed(int index) {
     setState(() {
       _selectedButtonIndex = index;
+    });
+
+    // Determine the goal value based on the index
+    String goal = "";
+    switch (index) {
+      case 0:
+        goal = "Sedentary";
+        break;
+      case 1:
+        goal = "Maintain my current body balance score";
+        break;
+      case 2:
+        goal = "Lose weight";
+        break;
+      case 3:
+        goal = "Gain Weight";
+        break;
+      case 4:
+        goal = "Gain lean muscle mass";
+        break;
+    }
+
+    // Save goal to Firebase Firestore
+    _firestore.collection('users').doc('yourUserId').set({
+      'goal': goal,
+    }).then((_) {
+      print("Goal saved successfully!");
+    }).catchError((error) {
+      print("Error saving goal: $error");
     });
   }
 
@@ -60,7 +91,7 @@ class _Step1State extends State<Step1> {
                       icon: Icon(Icons.chevron_left),
                       iconSize: 50.0,
                       onPressed: () {
-                        Navigator.pop(context);
+                        // Navigator.pop(context);
                       },
                     ),
                     Expanded(
